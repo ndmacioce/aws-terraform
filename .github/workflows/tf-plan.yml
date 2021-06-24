@@ -19,14 +19,23 @@ jobs:
       continue-on-error: true
 
     - name: Terraform Init
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.TF_VAR_AWS_CREDENTIAL }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.TF_VAR_AWS_SECRET }}
       id: init
       run: terraform init
 
     - name: Terraform Validate
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.TF_VAR_AWS_CREDENTIAL }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.TF_VAR_AWS_SECRET }}
       id: validate
       run: terraform validate -no-color
 
     - name: Terraform Plan
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.TF_VAR_AWS_CREDENTIAL }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.TF_VAR_AWS_SECRET }}
       id: plan
       run: terraform plan -no-color
       continue-on-error: true
