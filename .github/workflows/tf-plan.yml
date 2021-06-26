@@ -90,6 +90,9 @@ jobs:
     - name: Terraform Plan
       id: plan
       run: terraform plan -no-color
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.TF_VAR_AWS_CREDENTIAL }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.TF_VAR_AWS_SECRET }}
 
     - uses: actions/github-script@0.9.0
       if: github.event_name == 'pull_request'
@@ -109,3 +112,6 @@ jobs:
     - name: Terraform Apply
       if: github.ref == 'refs/heads/master' && github.event_name == 'push'
       run: terraform apply -auto-approve
+      env:
+        AWS_ACCESS_KEY_ID: ${{ secrets.TF_VAR_AWS_CREDENTIAL }}
+        AWS_SECRET_ACCESS_KEY: ${{ secrets.TF_VAR_AWS_SECRET }}
