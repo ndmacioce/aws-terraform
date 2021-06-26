@@ -5,6 +5,7 @@ provider "aws" {
 terraform {
   backend "s3" {
     bucket = "macioce-tf-state"
+    key    = "default.tf"
     region = "us-west-2"
   }
 }
