@@ -12,9 +12,9 @@ module "lilmacioce_static_website" {
   website-domain-redirect = "www.isbabymaciocehereyet.com"
 }
 
-module "links_static_website" {
-  source = "cloudmaniac/static-website/aws"
+module "aws_static_website_3" {
+  source = "../modules/static-site"
 
-  website-domain-main     = "links.nickmacioce.com"
-  website-domain-redirect = "links.nickmacioce.com"
+  hosted-zone-name    = "nickmacioce.com" # UPDATE ME WITH CORRECT HOSTED ZONE!!
+  website-domain-main = "links.nickmacioce.com" # UPDATE ME WITH DOMAIN NAME. NOTE THIS MAY OR MAY NOT BE THE SAME AS THE HOSTED ZONE DEPENDING ON ENV.
 }
