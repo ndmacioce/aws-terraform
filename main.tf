@@ -13,3 +13,7 @@ terraform {
 module "s3" {
   source = "./infra"
 }
+
+module "networking" {
+  source = "./infra/networking"
+}
