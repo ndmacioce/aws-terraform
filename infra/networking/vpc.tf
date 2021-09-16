@@ -1,9 +1,14 @@
 terraform {
   required_providers {
     aws = {
-      source  = "hashicorp/aws"
+      source = "hashicorp/aws"
+      version = "3.58.0"
     }
   }
+}
+
+provider "aws" {
+  # Configuration options
 }
 
 resource "aws_vpc" "main" {
@@ -11,7 +16,8 @@ resource "aws_vpc" "main" {
   instance_tenancy = "default"
 
   tags = {
-    Use = "Personal"
+    Name     = "Main VPC"
+    Use      = "Personal"
     Division = "Macioce"
   }
 }
@@ -21,7 +27,8 @@ resource "aws_subnet" "private_subnet_1" {
   cidr_block = "10.0.0.0/25"
 
   tags = {
-    Use = "Personal"
+    Name     = "Private Subnet 1"
+    Use      = "Personal"
     Division = "Macioce"
   }
 }
@@ -31,7 +38,8 @@ resource "aws_subnet" "public_subnet_1" {
   cidr_block = "10.0.0.128/25"
 
   tags = {
-    Use = "Personal"
+    Name     = "Public Subnet 1"
+    Use      = "Personal"
     Division = "Macioce"
   }
 }
