@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     aws = {
-      source = "hashicorp/aws"
+      source  = "hashicorp/aws"
       version = "3.58.0"
     }
   }
@@ -9,6 +9,8 @@ terraform {
 
 provider "aws" {
   # Configuration options
+  alias  = "us-east-1"
+  region = "us-east-1"
 }
 
 resource "aws_vpc" "main" {
