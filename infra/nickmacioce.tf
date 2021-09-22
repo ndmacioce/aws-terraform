@@ -26,6 +26,13 @@ module "links-nickmacioce" {
   website-domain-main = "links.nickmacioce.com" # UPDATE ME WITH DOMAIN NAME. NOTE THIS MAY OR MAY NOT BE THE SAME AS THE HOSTED ZONE DEPENDING ON ENV.
 }
 
+module "stage-nickmacioce" {
+  source = "../modules/site-infra"
+
+  hosted-zone-name    = "nickmacioce.com"       # UPDATE ME WITH CORRECT HOSTED ZONE!!
+  website-domain-main = "stage.nickmacioce.com" # UPDATE ME WITH DOMAIN NAME. NOTE THIS MAY OR MAY NOT BE THE SAME AS THE HOSTED ZONE DEPENDING ON ENV.
+}
+
 module "isbabymaciocehereyet" {
   source = "../modules/site-infra"
 
