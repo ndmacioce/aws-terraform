@@ -65,6 +65,9 @@ jobs:
     - name: Checkout
       uses: actions/checkout@v2
 
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v1
+
     # Install the latest version of Terraform CLI and configure the Terraform CLI configuration file with a Terraform Cloud user API token
     # - name: Setup Terraform
     #   uses: hashicorp/setup-terraform@v1.0.1
@@ -93,13 +96,12 @@ jobs:
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.TF_VAR_AWS_CREDENTIAL }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.TF_VAR_AWS_SECRET }}
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     - uses: actions/github-script@0.9.0
       if: github.event_name == 'pull_request'
       env:
         STDOUT: "```${{ steps.plan.outputs.stdout }}```"
-      with: 
+      with:
         github-token: ${{ secrets.GITHUB_TOKEN }}
         script: |
           github.issues.createComment({
@@ -108,15 +110,6 @@ jobs:
             repo: context.repo.repo,
             body: process.env.STDOUT
           })
-    - name: Post Plan
-        if: always() && github.ref != 'refs/heads/main' && (steps.plan.outcome == 'success' || steps.plan.outcome == 'failure')
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        uses: robburger/terraform-pr-commenter@v1
-        with:
-          commenter_type: plan
-          commenter_input: ${{ format('{0}{1}', steps.plan.outputs.stdout, steps.plan.outputs.stderr) }}
-          commenter_exitcode: ${{ steps.plan.outputs.exitcode }}
       # On push to master, build or change infrastructure according to Terraform configuration files
       # Note: It is recommended to set up a required "strict" status check in your repository for "Terraform Cloud". See the documentation on "strict" required status checks for more information: https://help.github.com/en/github/administering-a-repository/types-of-required-status-checks
     - name: Terraform Apply
