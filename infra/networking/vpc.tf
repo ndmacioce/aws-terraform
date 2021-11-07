@@ -45,3 +45,7 @@ resource "aws_subnet" "public_subnet_1" {
     Division = "Macioce"
   }
 }
+
+resource "aws_default_security_group" "default" {
+  vpc_id = aws_vpc.main.id
+}
