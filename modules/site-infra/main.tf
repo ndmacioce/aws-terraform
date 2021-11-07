@@ -84,7 +84,6 @@ data "aws_acm_certificate" "wildcard_website" {
 # Creates bucket to store the static website
 resource "aws_s3_bucket" "website_root" {
   bucket = "${var.website-domain-main}-root"
-  acl    = "public-read"
 
   # Comment the following line if you are uncomfortable with Terraform destroying the bucket even if not empty
   force_destroy = true
@@ -102,6 +101,15 @@ resource "aws_s3_bucket" "website_root" {
   lifecycle {
     ignore_changes = [tags["Changed"]]
   }
+}
+
+resource "aws_s3_bucket_public_access_block" "access_good_1" {
+  bucket = aws_s3_bucket.website_root.id
+
+  restrict_public_buckets = true
+  block_public_acls       = true
+  block_public_policy     = true
+  ignore_public_acls      = true
 }
 
 ## CloudFront
