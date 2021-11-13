@@ -17,3 +17,7 @@ module "s3" {
 module "networking" {
   source = "./infra/networking"
 }
+
+module "cloudfront" {
+  source = "./infra/cloudfront"
+}

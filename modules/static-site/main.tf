@@ -1,18 +1,3 @@
-## Providers definition
-
-terraform {
-  required_providers {
-    aws = {
-      source  = "hashicorp/aws"
-      version = "3.58.0"
-    }
-  }
-}
-
-provider "aws" {
-  alias  = "us-east-1"
-  region = "us-east-1"
-}
 
 ## Route 53
 # Provides details about the zone
@@ -24,7 +9,6 @@ data "aws_route53_zone" "main" {
 ## ACM (AWS Certificate Manager)
 # Creates the wildcard certificate *.<yourdomain.com>
 resource "aws_acm_certificate" "wildcard_website" {
-  provider                  = aws.us-east-1
   domain_name               = var.website-domain-main
   subject_alternative_names = ["*.${var.website-domain-main}"]
   validation_method         = "DNS"
@@ -59,7 +43,6 @@ resource "aws_route53_record" "wildcard_validation" {
 
 # Triggers the ACM wildcard certificate validation event
 resource "aws_acm_certificate_validation" "wildcard_cert" {
-  provider                = aws.us-east-1
   certificate_arn         = aws_acm_certificate.wildcard_website.arn
   validation_record_fqdns = [for k, v in aws_route53_record.wildcard_validation : v.fqdn]
 }
@@ -67,7 +50,6 @@ resource "aws_acm_certificate_validation" "wildcard_cert" {
 
 # Get the ARN of the issued certificate
 data "aws_acm_certificate" "wildcard_website" {
-  provider = aws.us-east-1
 
   depends_on = [
     aws_acm_certificate.wildcard_website,
@@ -112,6 +94,34 @@ resource "aws_s3_bucket_public_access_block" "access_good_1" {
   ignore_public_acls      = true
 }
 
+resource "aws_s3_bucket_policy" "oai-policy" {
+  bucket = aws_s3_bucket.website_root.id
+
+  # Terraform's "jsonencode" function converts a
+  # Terraform expression's result to valid JSON syntax.
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Id      = "CLOUDFRONT_OAI_POLICY"
+    Statement = [
+      {
+        "Effect" : "Allow",
+        "Principal" : {
+          "AWS" : "arn:aws:iam::cloudfront:user/CloudFront Origin Access Identity E13B67DH4T3QW9"
+        },
+        "Action" : [
+          "s3:GetObject*",
+          "s3:GetBucket*",
+          "s3:List*"
+        ],
+        Resource = [
+          "${aws_s3_bucket.website_root.arn}",
+          "${aws_s3_bucket.website_root.arn}/*",
+        ]
+      },
+    ]
+  })
+}
+
 ## CloudFront
 # Creates the CloudFront distribution to serve the static website
 resource "aws_cloudfront_distribution" "website_cdn_root" {
@@ -122,14 +132,10 @@ resource "aws_cloudfront_distribution" "website_cdn_root" {
 
   origin {
     origin_id   = "origin-bucket-${aws_s3_bucket.website_root.id}"
-    domain_name = aws_s3_bucket.website_root.website_endpoint
+    domain_name = aws_s3_bucket.website_root.bucket_domain_name
 
-    custom_origin_config {
-      origin_protocol_policy = "http-only"
-      # The protocol policy that you want CloudFront to use when fetching objects from the origin server (a.k.a S3 in our situation). HTTP Only is the default setting when the origin is an Amazon S3 static website hosting endpoint, because Amazon S3 doesn’t support HTTPS connections for static website hosting endpoints.
-      http_port            = 80
-      https_port           = 443
-      origin_ssl_protocols = ["TLSv1.2", "TLSv1.1", "TLSv1"]
+    s3_origin_config {
+      origin_access_identity = "origin-access-identity/cloudfront/E13B67DH4T3QW9"
     }
   }
 
@@ -197,31 +203,4 @@ resource "aws_route53_record" "website_cdn_root_record" {
     zone_id                = aws_cloudfront_distribution.website_cdn_root.hosted_zone_id
     evaluate_target_health = false
   }
-}
-
-
-# Creates policy to allow public access to the S3 bucket
-resource "aws_s3_bucket_policy" "update_website_root_bucket_policy" {
-  bucket = aws_s3_bucket.website_root.id
-
-  policy = <<POLICY
-{
-  "Version": "2012-10-17",
-  "Id": "PolicyForWebsiteEndpointsPublicContent",
-  "Statement": [
-    {
-      "Sid": "PublicRead",
-      "Effect": "Allow",
-      "Principal": "*",
-      "Action": [
-        "s3:GetObject"
-      ],
-      "Resource": [
-        "${aws_s3_bucket.website_root.arn}/*",
-        "${aws_s3_bucket.website_root.arn}"
-      ]
-    }
-  ]
-}
-POLICY
 }
