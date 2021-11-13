@@ -13,21 +13,21 @@
 # }
 
 module "nickmacioce" {
-  source = "../modules/site-infra"
+  source = "../modules/new-infra"
 
   hosted-zone-name    = "nickmacioce.com" # UPDATE ME WITH CORRECT HOSTED ZONE!!
   website-domain-main = "nickmacioce.com" # UPDATE ME WITH DOMAIN NAME. NOTE THIS MAY OR MAY NOT BE THE SAME AS THE HOSTED ZONE DEPENDING ON ENV.
 }
 
 module "links-nickmacioce" {
-  source = "../modules/site-infra"
+  source = "../modules/new-infra"
 
   hosted-zone-name    = "nickmacioce.com"       # UPDATE ME WITH CORRECT HOSTED ZONE!!
   website-domain-main = "links.nickmacioce.com" # UPDATE ME WITH DOMAIN NAME. NOTE THIS MAY OR MAY NOT BE THE SAME AS THE HOSTED ZONE DEPENDING ON ENV.
 }
 
 module "isbabymaciocehereyet" {
-  source = "../modules/site-infra"
+  source = "../modules/new-infra"
 
   hosted-zone-name    = "isbabymaciocehereyet.com" # UPDATE ME WITH CORRECT HOSTED ZONE!!
   website-domain-main = "isbabymaciocehereyet.com" # UPDATE ME WITH DOMAIN NAME. NOTE THIS MAY OR MAY NOT BE THE SAME AS THE HOSTED ZONE DEPENDING ON ENV.
