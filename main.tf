@@ -21,3 +21,7 @@ module "networking" {
 module "cloudfront" {
   source = "./infra/cloudfront"
 }
+
+module "s3-private-buckets" {
+  source = "./infra/s3"
+}
