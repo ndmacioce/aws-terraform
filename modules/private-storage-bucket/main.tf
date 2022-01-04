@@ -1,7 +1,7 @@
 ## S3
 # Creates bucket to store the static website
 resource "aws_s3_bucket" "storage_bucket" {
-  bucket = "${var.bucket-name}"
+  bucket = var.bucket-name
 
   # Comment the following line if you are uncomfortable with Terraform destroying the bucket even if not empty
   force_destroy = false
